@@ -1,0 +1,13 @@
+package Enums;
+
+public enum RequestType {
+    REGISTRATION,
+    AUTHORIZATION,
+    GET_ALL_USERS,
+    UPDATE_USER_ACCESS,
+    DELETE_USER,
+    ADMIN_VIEW_CATALOG,
+    GET_ALL_CATEGORIES,
+    FILTER_PRODUCTS,
+    SEARCH_PRODUCTS,
+}

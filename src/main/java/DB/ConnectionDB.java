@@ -45,14 +45,6 @@ public class ConnectionDB extends Configs{
 
     public void signUpUser(User obj) throws SQLException, ClassNotFoundException {
 
-
-
-//            String insert = "INSERT INTO " + Const.USER_TABLE+"("+
-//                    Const.USER_LOGIN+","+Const.USER_PASSWORD+","+
-//                    Const.USER_FIRSTNAME+","+Const.USER_LASTNAME+","
-//                    +Const.USER_EMAIL+","+Const.USER_ROLEid+")"
-//                    +" VALUES(?,?,?,?,?,?)";
-
         String insert = "INSERT INTO " + Const.USER_TABLE + "(" +
                 Const.USER_LOGIN + "," + Const.USER_PASSWORD + "," +
                 Const.USER_FIRSTNAME + "," + Const.USER_LASTNAME + "," +

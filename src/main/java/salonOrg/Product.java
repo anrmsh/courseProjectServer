@@ -5,16 +5,23 @@ import java.io.Serializable;
 public class Product implements Serializable {
     private int productId;
     private String productName;
-    private double productPrice;
+    private double sellPrice;
     private String category;
-    private double purchasePrice;
+    private double cost;
 
-    public Product(int productId, String productName, double productPrice, String category, double purchasePrice) {
+    public Product() {
+        this.productName = "";
+        this.sellPrice = 0;
+        this.category = "";
+        this.cost = 0;
+    }
+
+    public Product(int productId, String productName, double sellPrice, String category, double cost) {
         this.productId = productId;
         this.productName = productName;
-        this.productPrice = productPrice;
+        this.sellPrice = sellPrice;
         this.category = category;
-        this.purchasePrice = purchasePrice;
+        this.cost = cost;
     }
 
     public int getProductId() {
@@ -33,12 +40,12 @@ public class Product implements Serializable {
         this.productName = productName;
     }
 
-    public double getProductPrice() {
-        return productPrice;
+    public double getSellPrice() {
+        return sellPrice;
     }
 
-    public void setProductPrice(double productPrice) {
-        this.productPrice = productPrice;
+    public void setSellPrice(double sellPrice) {
+        this.sellPrice = sellPrice;
     }
 
     public String getCategory() {
@@ -49,11 +56,11 @@ public class Product implements Serializable {
         this.category = category;
     }
 
-    public double getPurchasePrice() {
-        return purchasePrice;
+    public double getCost() {
+        return cost;
     }
 
-    public void setPurchasePrice(double purchasePrice) {
-        this.purchasePrice = purchasePrice;
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 }
