@@ -1,19 +1,35 @@
 package salonOrg;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cart implements Serializable {
-    private int userId;
+    private int cartId;
+    private User user; // агрегация
+    private List<CartItems> cartItems = new ArrayList<>();
 
-    public Cart(int userId) {
-        this.userId = userId;
+    public int getCartId() {
+        return cartId;
     }
 
-    public int getUserId() {
-        return userId;
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public List<CartItems> getCartItems() {
+        return cartItems;
+    }
+
+    public void setCartItems(List<CartItems> cartItems) {
+        this.cartItems = cartItems;
     }
 }

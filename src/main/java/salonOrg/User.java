@@ -10,6 +10,9 @@ public class User implements Serializable{
     private int role_id;
     private String roleName;
     private int access;
+    private int userId;
+
+
 
     public User() {
         this.login = "";
@@ -50,7 +53,13 @@ public class User implements Serializable{
     public String getLogin() {
         return login;
     }
+    public int getUserId() {
+        return userId;
+    }
 
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
     public void setLogin(String login) {
         this.login = login;
     }

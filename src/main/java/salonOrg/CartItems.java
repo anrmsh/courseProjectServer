@@ -5,23 +5,40 @@ import java.io.Serializable;
 public class CartItems implements Serializable {
     private int cartItemId;
     private int cartId;
-    private String productName;
+    private Product product;
     private int quantity;
 
+    public CartItems() {
+        this.product = new Product();
+    }
 
-    public CartItems(int cartItemId, int cartId, String productName, int quantity) {
-        this.cartItemId = cartItemId;
-        this.cartId = cartId;
-        this.productName = productName;
-        this.quantity = quantity;
+    public int getCartItemId() {
+        return cartItemId;
     }
 
     public String getProductName() {
-        return productName;
+        return product.getProductName();
+    }
+
+    public Double getProductPrice() {
+        return product.getSellPrice();
     }
 
     public void setProductName(String productName) {
-        this.productName = productName;
+        this.product.setProductName(productName);
+    }
+
+    public void setProductPrice(Double productPrice) {
+        this.product.setSellPrice(productPrice);
+    }
+
+
+    public Double getTotalCost(){
+        return product.getSellPrice()*quantity;
+    }
+
+    public void setCartItemId(int cartItemId) {
+        this.cartItemId = cartItemId;
     }
 
     public int getCartId() {
@@ -32,12 +49,12 @@ public class CartItems implements Serializable {
         this.cartId = cartId;
     }
 
-    public int getCartItemId() {
-        return cartItemId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setCartItemId(int cartItemId) {
-        this.cartItemId = cartItemId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public int getQuantity() {

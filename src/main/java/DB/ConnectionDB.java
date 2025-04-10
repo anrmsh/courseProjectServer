@@ -51,6 +51,8 @@ public class ConnectionDB extends Configs{
                 Const.USER_EMAIL + "," + Const.USER_ROLEid + ") " +
                 "VALUES(?,?,?,?,?, (SELECT role_id FROM role WHERE role_name = ?))";
 
+        String insertCart = "INSERT INTO cart (user_id) VALUES ((SELECT user_id FROM user WHERE login = ?))";
+
             try{
                 PreparedStatement prStmt = getDBConnection().prepareStatement(insert);
                 prStmt.setString(1,obj.getLogin());
@@ -62,6 +64,14 @@ public class ConnectionDB extends Configs{
                 //prStmt.setString(6, String.valueOf(obj.getRole_id()));
 
                 prStmt.executeUpdate();
+
+                try (PreparedStatement cartStatement = getDBConnection().prepareStatement(insertCart)) {
+                    cartStatement.setString(1,obj.getLogin());
+                    cartStatement.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
             } catch (SQLException e) {
                 e.printStackTrace();
             } catch (ClassNotFoundException e) {

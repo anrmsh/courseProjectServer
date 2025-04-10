@@ -5,12 +5,12 @@ import java.io.Serializable;
 public class Warehouse implements Serializable {
     private int warehouseId;
     private int quantityStock;
-    private String productName;
+    private Product product;
 
-    public Warehouse(int warehouseId, int quantityStock, String productName) {
+    public Warehouse(int warehouseId, int quantityStock, Product product) {
         this.warehouseId = warehouseId;
         this.quantityStock = quantityStock;
-        this.productName = productName;
+        this.product = product;
     }
 
     public int getWarehouseId() {
@@ -29,11 +29,11 @@ public class Warehouse implements Serializable {
         this.quantityStock = quantityStock;
     }
 
-    public String getProductName() {
-        return productName;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

@@ -6,6 +6,8 @@ public class OrderState implements Serializable {
     private int orderStateId;
     private String orderStateName;
 
+    public OrderState() {}
+
     public OrderState(int orderStateId, String orderStateName) {
         this.orderStateId = orderStateId;
         this.orderStateName = orderStateName;

@@ -8,12 +8,14 @@ public class Product implements Serializable {
     private double sellPrice;
     private String category;
     private double cost;
+    private int quantity;
 
     public Product() {
         this.productName = "";
         this.sellPrice = 0;
         this.category = "";
         this.cost = 0;
+        this.quantity = 0;
     }
 
     public Product(int productId, String productName, double sellPrice, String category, double cost) {
@@ -22,6 +24,14 @@ public class Product implements Serializable {
         this.sellPrice = sellPrice;
         this.category = category;
         this.cost = cost;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public int getProductId() {
@@ -63,4 +73,5 @@ public class Product implements Serializable {
     public void setCost(double cost) {
         this.cost = cost;
     }
+
 }

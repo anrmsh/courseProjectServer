@@ -13,6 +13,12 @@ public class Response implements Serializable {
         this.responseMessage = responseMessage;
         this.responseData = responseData;
     }
+
+    public Response(ResponseStatus responseStatus, String responseMessage) {
+        this.responseStatus = responseStatus;
+        this.responseMessage = responseMessage;
+    }
+
     public Response(){
 
     }

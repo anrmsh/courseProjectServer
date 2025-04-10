@@ -4,32 +4,17 @@ import java.io.Serializable;
 
 public class OrderItems implements Serializable {
     private int orderItemId;
-    private int orderId;
-    private String productName;
+    private Order order; // агрегация
+    private Product product;
     private int quantity;
 
-    public OrderItems(int orderItemId, int quantity, String productName, int orderId) {
+    public OrderItems() {};
+
+    public OrderItems(int orderItemId, Order order, Product product, int quantity) {
         this.orderItemId = orderItemId;
+        this.order = order;
+        this.product = product;
         this.quantity = quantity;
-        this.productName = productName;
-        this.orderId = orderId;
-    }
-
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
     }
 
     public int getOrderItemId() {
@@ -38,6 +23,22 @@ public class OrderItems implements Serializable {
 
     public void setOrderItemId(int orderItemId) {
         this.orderItemId = orderItemId;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public int getQuantity() {
