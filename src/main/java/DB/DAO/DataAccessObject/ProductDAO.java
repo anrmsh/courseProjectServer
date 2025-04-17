@@ -2,6 +2,7 @@ package DB.DAO.DataAccessObject;
 
 import DB.ConnectionDB;
 import DB.DAO.DAO;
+import salonOrg.Order;
 import salonOrg.Product;
 
 import java.sql.Connection;
@@ -223,6 +224,29 @@ public class ProductDAO implements DAO<Product> {
         }
 
 
+
+    }
+
+
+    public boolean updateProductSellPrice(Product modifyProduct){
+        ConnectionDB connectionDB = new ConnectionDB();
+        String sqlQuery = "UPDATE `product` SET price = ? WHERE product_name = ?";
+        try(Connection connection = connectionDB.getDBConnection();
+            PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+
+            statement.setDouble(1, modifyProduct.getSellPrice());
+            statement.setString(2, modifyProduct.getProductName());
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                return true;
+            }else {
+                return false;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
 
     }
 }

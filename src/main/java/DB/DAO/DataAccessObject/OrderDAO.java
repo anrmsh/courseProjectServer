@@ -7,10 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class OrderDAO {
 
@@ -112,6 +109,42 @@ public class OrderDAO {
         return items;
     }
 
+
+    public List<Order> getAllOrders() throws SQLException, ClassNotFoundException {
+        ConnectionDB connectionDB = new ConnectionDB();
+        String sql = """
+        SELECT o.order_id, p.payment_method, o.order_date, o.total_amount, os.order_state_name
+        FROM `order` o
+        INNER JOIN payment p ON p.payment_id = o.payment_id
+        INNER JOIN order_state os ON o.order_state_id = os.order_state_id
+    """;
+        Connection connection = connectionDB.getDBConnection();
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+
+        List<Order> items = new ArrayList<>();
+
+        while (rs.next()) {
+            OrderState orderState = new OrderState();
+            Payment payment = new Payment();
+            Order item = new Order();
+            item.setOrderId(rs.getInt("order_id"));
+            orderState.setOrderStateName((rs.getString("order_state_name")));
+            item.setOrderState(orderState);
+            payment.setPaymentMethod((rs.getString("payment_method")));
+            item.setPayment(payment);
+            item.setTotalAmount(rs.getDouble("total_amount"));
+            item.setOrderDate((rs.getString("order_date")));
+
+            items.add(item);
+        }
+        return items;
+    }
+
+
+
+
+
     public List<OrderItems> getOrderDetail(Order order, String login) throws SQLException, ClassNotFoundException {
         ConnectionDB connectionDB = new ConnectionDB();
         String sql = """
@@ -154,7 +187,7 @@ public class OrderDAO {
         ORDER BY month
     """;
 
-        Map<String, Integer> result = new LinkedHashMap<>();
+        Map<String, Integer> result = new HashMap<>();
         try (Connection conn = connectionDB.getDBConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -177,7 +210,7 @@ public class OrderDAO {
         ORDER BY month
     """;
 
-        Map<String, Double> result = new LinkedHashMap<>();
+        Map<String, Double> result = new HashMap<>();
         try (Connection conn = connectionDB.getDBConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -191,6 +224,56 @@ public class OrderDAO {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public List<OrderState> getAllStatusOrder(){
+        ConnectionDB connectionDB = new ConnectionDB();
+        List<OrderState> orderStates = new ArrayList<OrderState>();
+        String sqlQuery = "SELECT * " + "FROM order_state ";
+
+        try(Connection connection = connectionDB.getDBConnection();
+            PreparedStatement statement = connection.prepareStatement(sqlQuery);
+            ResultSet res = statement.executeQuery()){
+
+            while (res.next()) {
+                OrderState status = new OrderState();
+                status.setOrderStateId(res.getInt("order_state_id"));
+                status.setOrderStateName(res.getString("order_state_name"));
+
+                orderStates.add(status);
+            }
+
+        } catch (SQLException | ClassNotFoundException e){
+            e.printStackTrace();
+        }
+
+        return orderStates;
+
+    }
+
+    public boolean updateOrderState(List<Order> modifiedOrders){
+        ConnectionDB connectionDB = new ConnectionDB();
+        String sqlQuery = "UPDATE `order` SET order_state_id = (SELECT order_state_id FROM `order_state` WHERE order_state_name = ?) WHERE order_id = ?";
+        try(Connection connection = connectionDB.getDBConnection();
+            PreparedStatement statement = connection.prepareStatement(sqlQuery)) {
+
+            for (Order order : modifiedOrders) {
+                statement.setString(1, order.getOrderState().getOrderStateName());
+                statement.setInt(2, order.getOrderId());
+
+                int result = statement.executeUpdate();
+
+                if(result==0){
+                    return false;
+                }
+
+            }
+            return true;
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
 

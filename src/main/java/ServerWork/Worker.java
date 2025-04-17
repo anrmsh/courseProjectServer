@@ -16,6 +16,7 @@ import java.io.*;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -302,6 +303,16 @@ while (true) {
             soos.writeObject(response);
             soos.flush();
         }
+
+        case MANAGER_VIEW_ORDERS -> {
+            OrderDAO orderDAO = new OrderDAO();
+            List<Order> myOrders = orderDAO.getAllOrders();
+            String jsonData = new Gson().toJson(myOrders);
+            Response response = new Response(ResponseStatus.OK,"Мои заказы", jsonData);
+            soos.writeObject(response);
+            soos.flush();
+        }
+
         case VIEW_ORDER_DETAILS -> {
             String userLogin = request.getUserLogin();
             Order order = new Gson().fromJson(request.getRequestMessage(), Order.class);
@@ -315,17 +326,157 @@ while (true) {
         }
         case SALES_LINE_CHART -> {
             OrderDAO orderDAO = new OrderDAO();
-            Map<String, Double> revenueMap = orderDAO.getMonthlyRevenue();
-            response.setResponseStatus(ResponseStatus.OK);
-            response.setResponseData(new Gson().toJson(revenueMap));
+                Map<String, Double> revenueMap = orderDAO.getMonthlyRevenue();
+            Response response = new Response();
+                response.setResponseStatus(ResponseStatus.OK);
+                response.setResponseData(new Gson().toJson(revenueMap));
+                System.out.println("Data is sent");
+                System.out.println(revenueMap);
+                soos.writeObject(response);
+                soos.flush();
+
         }
 
         case SALES_BAR_CHART -> {
             OrderDAO orderDAO = new OrderDAO();
             Map<String, Integer> orderCountMap = orderDAO.getMonthlyOrderCount();
+            Response response = new Response();
             response.setResponseStatus(ResponseStatus.OK);
             response.setResponseData(new Gson().toJson(orderCountMap));
+            System.out.println("Data is sent");
+            System.out.println(orderCountMap);
+            soos.writeObject(response);
+            soos.flush();
         }
+
+        case MAKE_SALES_REPORT ->{
+            Response response1 = new Response();
+            String[] dates = request.getRequestMessage().split(",");
+            LocalDate startDate = LocalDate.parse(dates[0]);
+            LocalDate endDate = LocalDate.parse(dates[1]);
+
+            ReportDAO reportDAO = new ReportDAO();
+            int totalOrders = reportDAO.countAllOrders(startDate, endDate);
+            int completedOrders = reportDAO.countCompletedOrders(startDate, endDate);
+            int totalProductsSold = reportDAO.countTotalProductsSold(startDate, endDate);
+            double totalRevenue = reportDAO.sumTotalRevenue(startDate, endDate);
+            double averageCheque = totalOrders > 0 ? totalRevenue / totalOrders : 0.0;
+            String topProduct = reportDAO.getTopSellingProduct(startDate, endDate);
+
+            ManagerReport report = new ManagerReport(
+                    totalOrders,
+                    completedOrders,
+                    totalProductsSold,
+                    topProduct,
+                    totalRevenue,
+                    averageCheque
+
+            );
+
+            response1.setResponseStatus(ResponseStatus.OK);
+            response1.setResponseData(new Gson().toJson(report));
+            response1.setResponseMessage("Отчёт успешно сформирован");
+
+            soos.writeObject(response1);
+            soos.flush();
+        }
+
+        case RESTOCK_WAREHOUSE -> {
+            Product product = new Gson().fromJson(request.getRequestMessage(), Product.class);
+
+            WarehouseDAO warehouseDAO = new WarehouseDAO();
+
+            soos.writeObject(warehouseDAO.addToWarehouse(product));
+            soos.flush();
+
+        }
+        case GET_ALL_STATUS_ORDERS ->{
+            OrderDAO orderDAO = new OrderDAO();
+            List<OrderState> orderStates = orderDAO.getAllStatusOrder();
+
+            String jsonCategories = new Gson().toJson(orderStates);
+            Response response = new Response(ResponseStatus.OK, "Список статусов заказа", jsonCategories);
+            soos.writeObject(response);
+            soos.flush();
+        }
+        case UPDATE_ORDER_STATE ->{
+            OrderDAO orderDAO = new OrderDAO();
+
+
+            String message = request.getRequestMessage();
+            List<Order> ordersToUpdate =  new Gson().fromJson(message, new TypeToken<List<Order>>(){}.getType());
+            boolean updateResult = orderDAO.updateOrderState(ordersToUpdate);
+
+            Response response;
+            if (updateResult) {
+                response = new Response(ResponseStatus.OK, "Статус заказов успешно обновлен", null);
+            } else {
+                response = new Response(ResponseStatus.ERROR, "Ошибка при обновлении статуса заказа", null);
+            }
+
+            soos.writeObject(response);
+            soos.flush();
+        }
+
+        case GET_ACCOUNTING_DATA -> {
+            String[] dates = request.getRequestMessage().split(",");
+//            LocalDate startDate = LocalDate.parse(dates[0]);
+//            LocalDate endDate = LocalDate.parse(dates[1]);
+
+            String startDate = dates[0];
+            String endDate = dates[1];
+
+            OperationsDAO operationsDAO = new OperationsDAO();
+            Response response2;
+            response2 = operationsDAO.getOperationsForAccounter(startDate, endDate);
+
+            response2.setResponseMessage("Операции добавлены");
+
+            soos.writeObject(response2);
+            soos.flush();
+        }
+
+        case MAKE_ACCOUNTIONG_REPORT -> {
+
+           Response response1 = new Response();
+            FinancialReportDAO reportDAO = new FinancialReportDAO();
+
+            double totalRevenue = reportDAO.getRevenue();
+            double totalExpenses = reportDAO.getExpenses();
+            FinacialReport report = new FinacialReport(totalRevenue, totalExpenses);
+
+            response1.setResponseStatus(ResponseStatus.OK);
+            response1.setResponseData(new Gson().toJson(report));
+            response1.setResponseMessage("Отчёт успешно сформирован");
+
+            soos.writeObject(response1);
+            soos.flush();
+
+        }
+        case SET_DISCOUNT_MARKUP -> {
+            ProductDAO productDAO = new ProductDAO();
+            String message = request.getRequestMessage();
+            Product modifyProduct = new Gson().fromJson(message, Product.class);
+            boolean updateProduct = productDAO.updateProductSellPrice(modifyProduct);
+
+            Response response = new Response();
+            if (updateProduct) {
+                response.setResponseStatus(ResponseStatus.OK);
+                response.setResponseMessage("Цена продажи успешно изменена!");
+
+            } else {
+                response.setResponseStatus(ResponseStatus.ERROR);
+                response.setResponseMessage("Ошибка при изменении цены продажи!");
+
+            }
+
+            soos.writeObject(response);
+            soos.flush();
+        }
+
+
+
+
     }
 
 
