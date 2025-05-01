@@ -4,7 +4,6 @@ import DB.DAO.DataAccessObject.*;
 import Enums.ResponseStatus;
 import com.google.gson.Gson;
 import DB.*;
-import Enums.RequestType;
 import TCP.Request;
 import TCP.Response;
 import com.google.gson.reflect.TypeToken;
@@ -14,7 +13,6 @@ import salonOrg.User;
 
 import java.io.*;
 import java.net.Socket;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -468,6 +466,24 @@ while (true) {
                 response.setResponseStatus(ResponseStatus.ERROR);
                 response.setResponseMessage("Ошибка при изменении цены продажи!");
 
+            }
+
+            soos.writeObject(response);
+            soos.flush();
+        }
+
+        case GET_ACCOUNTER_LASTNAME -> {
+
+            UserDAO userDAO = new UserDAO();
+            String messageUserLogin = request.getRequestMessage();
+            String answer = userDAO.getAccounterLastName(messageUserLogin);
+            Response response = new Response();
+            if (answer != null) {
+                response.setResponseStatus(ResponseStatus.OK);
+                response.setResponseMessage(answer);
+            } else {
+                response.setResponseStatus(ResponseStatus.ERROR);
+                response.setResponseMessage("Фамилия не найдена");
             }
 
             soos.writeObject(response);

@@ -162,8 +162,9 @@ public class OrderDAO {
         ResultSet rs = stmt.executeQuery();
 
         List<OrderItems> items = new ArrayList<>();
-        Product product = new Product();
+
         while (rs.next()) {
+            Product product = new Product();
             OrderItems item = new OrderItems();
             item.setOrder(order);
             product.setProductName(rs.getString("product_name"));

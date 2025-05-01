@@ -48,9 +48,9 @@ public class PaymentDAO implements DAO<Payment> {
             PreparedStatement statement = connection.prepareStatement(sqlQuery);
             ResultSet res = statement.executeQuery()) {
 
-            Payment payment = new Payment();
-            while (res.next()) {
 
+            while (res.next()) {
+                Payment payment = new Payment();
                 payment.setPaymentId(res.getInt("payment_id"));
                 payment.setPaymentMethod(res.getString("payment_method"));
 

@@ -45,6 +45,24 @@ return users;
 
     }
 
+    public String getAccounterLastName(String userLogin) throws SQLException, ClassNotFoundException {
+        ConnectionDB connectionDB = new ConnectionDB();
+        String sqlQuery = "SELECT last_name FROM user WHERE login = ?";
+        try(Connection connection = connectionDB.getDBConnection();
+        PreparedStatement stmt = connection.prepareStatement(sqlQuery)){
+            stmt.setString(1, userLogin);
+            stmt.executeQuery();
+            ResultSet rs = stmt.getResultSet();
+            if(rs.next()){
+                System.out.println(rs.getString("last_name"));
+                return rs.getString("last_name");
+
+
+            }
+        }
+        return null;
+    }
+
  public boolean updateUsersAccess(List<User> modifiedUsers){
         ConnectionDB connectionDB = new ConnectionDB();
         String sqlQuery = "UPDATE user SET access = ? WHERE login = ?";
